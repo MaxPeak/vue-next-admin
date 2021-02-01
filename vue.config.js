@@ -9,11 +9,11 @@ useEnv("dev");
 module.exports = {
   devServer: {
     host: require("ip").address(),
-    open: true,
+    open: true
   },
   chainWebpack(config) {
     setAlias(config);
     useAnalyzer(config)(true);
   },
-  productionSourceMap: false,
+  productionSourceMap: false
 };
