@@ -1,0 +1,11 @@
+{
+  "dev":{
+    "VUE_APP_BASE_URL":"http://base-dev.com"
+  },
+  "test":{
+    "VUE_APP_BASE_URL":"http://base-test.com"
+  },
+  "main":{
+    "VUE_APP_BASE_URL":"http://base.com"
+  }
+}
