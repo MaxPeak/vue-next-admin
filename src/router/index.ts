@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import watch from "./watch";
 
 /**
  * 获取页面路由
@@ -28,22 +29,6 @@ const router = createRouter({
   routes
 });
 
-/**
- * 设置网页title
- */
-const setTitle = (title: string) => {
-  if (!title) return;
-  document.title = title;
-};
-
-router.beforeEach((to, from, next) => {
-  setTitle(to.meta.title);
-  next();
-});
-
-router.afterEach(() => {
-  // 处理埋点等一些操作
-  // code...
-});
+watch(router);
 
 export default router;

@@ -2,7 +2,7 @@ import { createApp } from "vue";
 import App from "./App.vue";
 
 // global plugins
-import router from "@plugins/router";
+import router from "./router";
 import store from "./store";
 
 // global styles
