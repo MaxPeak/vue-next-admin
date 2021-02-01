@@ -9,6 +9,7 @@
     "hot-update": "node ./scripts/hot-update update"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "dayjs": "^1.10.4",
     "normalize.css": "^8.0.1",
