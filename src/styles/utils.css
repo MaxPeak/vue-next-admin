@@ -1,0 +1,42 @@
+/* 单行省略号 */
+.ellipsis {
+  box-sizing: border-box;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* 多行省略号 */
+.ellipsis-line {
+  box-sizing: border-box;
+  display: -webkit-box;
+  overflow: hidden;
+  word-break: break-all;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* 禁止选中 */
+.unselect {
+  user-select: none;
+}
+
+/* 文字两端对齐 */
+.text-justify {
+  box-sizing: border-box;
+  /* safari不支持该属性 */
+  text-align-last: justify;
+}
+
+/* 兼容safari */
+.safari-text-justify {
+  box-sizing: border-box;
+  text-align: justify;
+}
+.safari-text-justify::after {
+  display: inline-block;
+  width: 100%;
+  height: 0;
+  content: "";
+}
