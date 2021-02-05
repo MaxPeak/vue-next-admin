@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文件夹上传</title>
+</head>
+
+<body>
+  <!-- webkitdirectory是关键属性 Chrome目前最多支持100个文件数量 -->
+  <input type="file" id="file" webkitdirectory />
+  <!-- 拖拽 -->
+  <div id="drag"></div>
+  <script>
+    // file接口
+    const file = document.getElementById("file");
+    file.onchange = (e) => {
+      // input files浏览器自动扫描文件并生成列表
+      const files = [...e.target.files].map((file) => {
+        // 为了接口统一，重写一个path属性
+        file.path = file.webkitRelativePath;
+        return file;
+      });
+      // 获取目录树形结构
+      const directoryTree = getDirectoryTree(files);
+      console.log(directoryTree);
+    };
+
+    // 拖拽
+    const drag = document.getElementById("drag");
+    drag.ondragover = (e) => {
+      // 必须要取消冒泡和默认事件的触发
+      e.stopPropagation();
+      e.preventDefault();
+    };
+    drag.ondrop = async (e) => {
+      // 必须要取消冒泡和默认事件的触发
+      e.stopPropagation();
+      e.preventDefault();
+      const { items } = event.dataTransfer;
+      // 拖拽的文件浏览器没有自动扫描生成列表，需要手动实现
+      const files = await getFiles(items);
+      // 获取目录树形结构
+      const directoryTree = getDirectoryTree(files);
+      console.log(directoryTree);
+    };
+  </script>
+</body>
+
+</html>

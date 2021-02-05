@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>模拟百度图片效果</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #000;
+    }
+
+    .container {
+      position: relative;
+      pointer-events: none;
+    }
+
+    .img-box {
+      display: flex;
+      overflow: hidden;
+      position: absolute;
+      justify-content: center;
+      align-items: center;
+      width: 380px;
+      background-color: #fff;
+      border-radius: 3px;
+      padding: 5px 0;
+      cursor: pointer;
+      pointer-events: auto;
+    }
+
+    .img-box img {
+      width: 370px;
+      pointer-events: none;
+    }
+
+    .layer {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container"></div>
+
+  <script>
+
+    let container = document.querySelector(".container");
+    let bearing = null;
+    createElementsAsync(30, res => {
+      container.appendChild(res);
+      layout();
+    });
+
+    container.addEventListener("mouseover", e => {
+      let { target: ele } = e;
+      let result = getPosition(e, ele);
+      ele.lastChild.enter(result, "100%");
+    });
+    container.addEventListener("mouseout", e => {
+      let { target: ele } = e;
+      let result = getPosition(e, ele);
+      ele.lastChild.leave(result, "100%");
+    });
+    // 懒加载
+    window.onscroll = function () {
+      let imgList = container.querySelectorAll(".img-box");
+      let scrollTop = document.documentElement.scrollTop;
+      let maxHeight = document.documentElement.clientHeight;
+      let lastTop = imgList[imgList.length - 1].offsetTop;
+      if (maxHeight + scrollTop >= lastTop) {
+        // console.log('到底了');
+        createElementsAsync(30, res => {
+          container.appendChild(res);
+          layout();
+        });
+      }
+    };
+
+    //获取数组最小值的index
+    function getMinIndex(arr) {
+      return arr.reduce(
+        (a, b, i) => {
+          if (b <= a.value) {
+            a.value = b;
+            a.index = i;
+          }
+          return a;
+        },
+        { value: arr[0], index: 0 }
+      );
+    }
+    //创建多个元素
+    function createElementsAsync(num, cb) {
+      return new Promise(async resolve => {
+        let frag = document.createDocumentFragment();
+        for (let i = 0; i < num; i++) {
+          frag.appendChild(await createElementAsync(i % 10));
+        }
+        resolve(frag);
+        cb && cb(frag);
+      });
+    }
+    //创建单个元素
+    function createElementAsync(num, cb) {
+      return new Promise(resolve => {
+        let imgBox = document.createElement("div");
+        imgBox.classList.add("img-box");
+        let img = new Image();
+        // 改为自己的图片地址
+        img.src = `./img/dog-img/dog-${num}.jpg`;
+        img.onload = () => {
+          imgBox.appendChild(img);
+          let layer = document.createElement("div");
+          layer.classList.add("layer");
+          imgBox.appendChild(layer);
+          resolve(imgBox);
+          cb && cb(imgBox);
+        };
+      });
+    }
+    //计算坐标进行布局(瀑布流核心算法)
+    function layout() {
+      let imgBox = [...container.querySelectorAll(".img-box")];
+      // ~~ 位运算向下取整
+      let num = ~~(document.body.clientWidth / 390);
+      //适应屏幕宽度自动居中
+      container.style.cssText = `width:${390 * num}px;margin:0 auto;`;
+      let heightList = [];
+      for (let i = 0; i < imgBox.length; i++) {
+        if (i + 1 <= num) {
+          //如果是第一行的就进行图片布局，初始化高度数组
+          imgBox[i].style.cssText = `top:5px;left:${i * 380 + 5 + i * 10}px;`;
+          heightList.push(imgBox[i].offsetHeight + 15);
+        } else {
+          //如果不是第一行就在高度最小的图片下面添加新的图片，并更新高度值
+          //获取最小高度的index
+          let minHeightIndex = getMinIndex(heightList).index;
+          //获取left偏移量
+          let { offsetLeft: left } = imgBox[minHeightIndex];
+          //获取top偏移量
+          let top = heightList[minHeightIndex];
+          //图片布局
+          imgBox[i].style.cssText = `top:${top}px;left:${left}px;`;
+          //更新高度数组
+          heightList[minHeightIndex] += imgBox[i].offsetHeight + 10;
+        }
+      }
+      let lastBottom = document.documentElement.scrollHeight;
+      container.style.height = `${lastBottom}px`;
+    }
+
+    //鼠标方位判断
+    function getPosition(e, ele) {
+      let { clientX: x, clientY: y } = e;
+      let { left, right, top, bottom } = ele.getBoundingClientRect();
+      let { abs } = Math;
+      let obj = {
+        top: y - top,
+        bottom: abs(y - bottom),
+        left: x - left,
+        right: abs(x - right)
+      };
+      let arr = Object.entries(obj);
+      let result = arr.reduce(
+        (a, b) => {
+          if (b[1] <= a.value) {
+            a.value = b[1];
+            a.type = b[0];
+          }
+          return a;
+        },
+        { value: arr[0][1], type: "" }
+      );
+      return result.type;
+    }
+    //蒙层进入
+    Node.prototype.enter = function (direction, value) {
+      //记录移入时的方向
+      bearing = direction;
+      if (direction === "left" || direction === "right") {
+        this.style.cssText = `${direction}:-${value};top:0;opacity:1`;
+      }
+      if (direction === "top" || direction === "bottom") {
+        this.style.cssText = `${direction}:-${value};left:0;opacity:1`;
+      }
+      setTimeout(() => {
+        this.style.cssText += `transition:.3s linear;`;
+        this.style[direction] = `0`;
+      });
+    };
+    //蒙层退出
+    Node.prototype.leave = function (direction, value) {
+      if (direction === bearing) {
+        //移入移出一样，则为负数
+        this.style[direction] = `-${value}`;
+      } else {
+        //移入和移出不一样，则重置为当前移出方向
+        if (direction === "left" || direction === "right") {
+          this.style.cssText = `${direction}:0;top:0;opacity:1;transition:.3s linear;`;
+        }
+        if (direction === "top" || direction === "bottom") {
+          this.style.cssText = `${direction}:0;left:0;opacity:1;transition:.3s linear;`;
+        }
+        setTimeout(() => {
+          this.style[direction] = `-${value}`;
+        }, 0);
+      }
+      //重置css
+      setTimeout(() => {
+        this.style.cssText = ``;
+      }, 400);
+    };
+  </script>
+</body>
+
+</html>

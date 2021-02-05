@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta name="keywords" content="code demo" />
+  <meta name="description" content="code demo" />
+  <meta name="author" content="MaxPeak" />
+  <title>code demo</title>
+  <style>
+    * {
+      margin: 0;
+    }
+
+    .container {
+      width: 400px;
+      height: 400px;
+      border: 1px solid red;
+      margin: auto;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .container img {
+      width: 800px;
+      height: 800px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      cursor: move;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <img src="images/girl.png" alt="800" />
+  </div>
+  <script>
+    let img = document.querySelector("img");
+    let container = document.querySelector(".container");
+    let onOff = false;
+    let clickData = {
+      X: 0,
+      Y: 0,
+      startX: 0,
+      startY: 0
+    };
+    container.addEventListener("mousedown", drag);
+    document.addEventListener("mousemove", drag);
+    document.addEventListener("mouseup", drag);
+    function drag(ev) {
+      ev = window.event || ev;
+      ev.preventDefault();
+      switch (ev.type) {
+        case "mousedown":
+          if (ev.target.tagName === "IMG") {
+            onOff = true;
+            clickData.X = ev.clientX;
+            clickData.Y = ev.clientY;
+            clickData.startX = img.offsetLeft;
+            clickData.startY = img.offsetTop;
+          }
+          break;
+        case "mousemove":
+          if (onOff) {
+            let X1 = ev.clientX;
+            let Y1 = ev.clientY;
+            let left = clickData.startX + X1 - clickData.X;
+            let top = clickData.startY + Y1 - clickData.Y;
+            //限定距离不能超出图片的大小
+            left = Math.min(0, Math.max(-400, left));
+            top = Math.min(0, Math.max(-400, top));
+            img.style.top = top + "px";
+            img.style.left = left + "px";
+          }
+          break;
+        case "mouseup":
+          onOff = false;
+          break;
+      }
+    }
+  </script>
+</body>
+
+</html>
