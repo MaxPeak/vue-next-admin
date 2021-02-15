@@ -14,7 +14,15 @@
       </template>
     </v-header>
 
-    <v-body v-if="data.length" />
+    <v-body v-if="data.length">
+      <template
+        v-for="(column, index) in columns"
+        #[column.prop]="{row}"
+        :key="index"
+      >
+        <slot :name="column.prop" :row="row" :column="column" />
+      </template>
+    </v-body>
 
     <v-empty v-else>
       <slot name="empty">empty</slot>
@@ -41,7 +49,7 @@
  * TODO:
  * 自定义表头 1
  * 高度 1
- * 自定义列
+ * 自定义列 1
  * 自动省略号
  * 单选/多选
  * 拖拽行/列

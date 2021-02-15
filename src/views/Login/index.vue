@@ -8,9 +8,8 @@
       row-key="key"
     >
       <!-- <template #title>custom title</template> -->
-      <!-- <template #header-name>
-        <span>custom name</span>
-      </template> -->
+      <!-- <template #header-name>custom name</template> -->
+      <!-- <template #name="{row,column}">custom {{ row[column.prop] }}</template> -->
       <!-- <template #empty>custom empty</template> -->
       <!-- <template #footer>custom footer</template> -->
       <!-- <template #pagination>custom pagination</template> -->
@@ -48,9 +47,9 @@ export default defineComponent({
     ];
     const data = Array.from({ length: 50 }).map((_, i) => ({
       key: i.toString(),
-      name: `Edrward ${i}`,
+      name: `name ${i}`,
       age: 32,
-      address: `London Park no. ${i}`
+      address: `address ${i}`
     }));
     const pagination = () => ({
       size: 16,

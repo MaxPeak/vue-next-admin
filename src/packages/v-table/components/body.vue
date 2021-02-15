@@ -11,7 +11,9 @@
       <thead>
         <tr v-for="row in data" :key="row[rowKey]">
           <td v-for="(column, columnIndex) in columns" :key="columnIndex">
-            {{ row[column.prop] }}
+            <slot :name="column.prop" :row="row">
+              <span>{{ row[column.prop] }}</span>
+            </slot>
           </td>
         </tr>
       </thead>
