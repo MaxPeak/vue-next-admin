@@ -16,3 +16,15 @@ export const lcs = (str: string) => {
     { max: 0, result: "" } as { max: number; result: string }
   );
 };
+
+export const toHyphenate = (str: string) => {
+  const hyphenateRE = /\B([A-Z])/g;
+  return str.replace(hyphenateRE, "-$1").toLocaleLowerCase();
+};
+
+export const toCamelCase = (str: string) => {
+  const camelCaseRE = /\-([a-z])/g;
+  return str.replace(camelCaseRE, $1 =>
+    $1.replace(/\-/, "").toLocaleUpperCase()
+  );
+};

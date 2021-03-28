@@ -1,4 +1,4 @@
-export const os = () => {
+const getOS = () => {
   // im.qq.com
   const ua = navigator.userAgent;
   const isQB = /(?:MQQBrowser|QQ)/.test(ua);
@@ -31,3 +31,5 @@ export const os = () => {
     isPc
   };
 };
+
+export default getOS;
