@@ -22,6 +22,24 @@ export const conversion = (number: number, radix = 2) => {
 };
 
 /**
+ * 二进制转十进制
+ * @example binaryTo10('10010') // 18
+ */
+const binaryTo10 = (binary: string) => {
+  const stack = []
+  let result = 0
+  let index = binary.length - 1
+  while (index >= 0) {
+    stack.push(2 ** (binary.length - 1 - index) * Number(binary[index]))
+    index--
+  }
+  while (stack.length) {
+    result += stack.pop()!
+  }
+  return result
+}
+
+/**
  * 单位转换
  * @example bytesToSize(1024)
  */
